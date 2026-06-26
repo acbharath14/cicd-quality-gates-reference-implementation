@@ -1,0 +1,23 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Build') {
+      steps {
+        echo 'build placeholder'
+      }
+    }
+
+    stage('Smoke') {
+      steps {
+        echo 'smoke placeholder'
+      }
+    }
+
+    stage('Quality Gates') {
+      steps {
+        echo 'quality gate placeholder'
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+node_modules/
+target/
+reports/
+playwright-report/
+allure-results/
+allure-report/
+.DS_Store
+.idea/
+.vscode/

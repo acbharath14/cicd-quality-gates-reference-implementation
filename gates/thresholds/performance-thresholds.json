@@ -1,0 +1,5 @@
+{
+  "p95LatencyMs": 800,
+  "errorRatePercent": 1,
+  "throughputRps": 100
+}

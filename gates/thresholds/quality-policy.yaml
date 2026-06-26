@@ -1,0 +1,11 @@
+smoke:
+  required: true
+performance:
+  required: true
+  fail_on_threshold_breach: true
+accessibility:
+  required: true
+  fail_on_critical: true
+static_analysis:
+  required: true
+  fail_on_blockers: true

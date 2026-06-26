@@ -1,0 +1,22 @@
+stages:
+  - build
+  - test
+  - quality
+
+build:
+  image: node:22
+  stage: build
+  script:
+    - echo "build placeholder"
+
+smoke:
+  image: mcr.microsoft.com/playwright:v1.54.1-noble
+  stage: test
+  script:
+    - echo "smoke placeholder"
+
+quality_gates:
+  image: node:22
+  stage: quality
+  script:
+    - echo "quality gate placeholder"
