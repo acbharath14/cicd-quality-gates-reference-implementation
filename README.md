@@ -18,6 +18,11 @@ Reference repo showing how automation, performance, accessibility, and static an
 ./run-tests.sh
 ```
 
+## Demonstrable Behavior
+1. Evaluates real sample metrics.
+2. Writes a release-readiness report to the reports folder.
+3. Fails when any gate crosses a threshold.
+
 ## Roadmap
 1. Add pipeline stages for build, smoke, performance, and accessibility
 2. Add threshold policy evaluation

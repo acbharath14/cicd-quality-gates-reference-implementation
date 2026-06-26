@@ -1,0 +1,6 @@
+{
+  "smoke": {"passed": true},
+  "performance": {"p95LatencyMs": 640, "errorRatePercent": 0.4, "throughputRps": 120},
+  "accessibility": {"criticalViolations": 0},
+  "staticAnalysis": {"blockers": 0}
+}
