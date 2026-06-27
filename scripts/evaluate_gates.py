@@ -11,10 +11,7 @@ THRESHOLDS = {
 }
 
 
-def main() -> int:
-    sample_path = Path(sys.argv[1] if len(sys.argv) > 1 else "sample-data/metrics.json")
-    data = json.loads(sample_path.read_text(encoding="utf-8"))
-
+def evaluate_metric_gates(data: dict) -> list[str]:
     failures = []
     if not data["smoke"]["passed"]:
         failures.append("Smoke gate failed")
@@ -28,11 +25,57 @@ def main() -> int:
         failures.append("Accessibility critical violations found")
     if data["staticAnalysis"]["blockers"] > THRESHOLDS["blockers"]:
         failures.append("Static analysis blockers found")
+    return failures
+
+
+def evaluate_integration_report(integration_data: dict | None) -> tuple[list[str], list[str]]:
+    failures: list[str] = []
+    warnings: list[str] = []
+    if integration_data is None:
+        return failures, warnings
+
+    final_decision = integration_data.get("finalDecision", "PASS")
+    if final_decision == "BLOCK":
+        failures.append("Integration suite reported BLOCK decision")
+    elif final_decision == "WARN":
+        warnings.append("Integration suite reported WARN decision")
+
+    for scenario in integration_data.get("scenarios", []):
+        decision = scenario.get("releaseDecision", "PASS")
+        scenario_name = scenario.get("scenario", "unknown")
+        reason = scenario.get("reason", "")
+        if decision == "BLOCK":
+            failures.append(f"Scenario '{scenario_name}' blocked release: {reason}")
+        elif decision == "WARN":
+            warnings.append(f"Scenario '{scenario_name}' raised warning: {reason}")
+
+    return failures, warnings
+
+
+def main() -> int:
+    sample_path = Path(sys.argv[1] if len(sys.argv) > 1 else "sample-data/metrics.json")
+    data = json.loads(sample_path.read_text(encoding="utf-8"))
+    integration_path = Path(sys.argv[2]) if len(sys.argv) > 2 else None
+    integration_data = None
+    if integration_path:
+        integration_data = json.loads(integration_path.read_text(encoding="utf-8"))
+
+    failures = evaluate_metric_gates(data)
+    integration_failures, warnings = evaluate_integration_report(integration_data)
+    failures.extend(integration_failures)
+
+    status = "PASS"
+    if failures:
+        status = "BLOCK"
+    elif warnings:
+        status = "WARN"
 
     report = {
-        "status": "PASS" if not failures else "FAIL",
+        "status": status,
         "failures": failures,
+        "warnings": warnings,
         "evaluatedFrom": str(sample_path),
+        "integrationReport": str(integration_path) if integration_path else "none",
     }
     Path("reports").mkdir(exist_ok=True)
     Path("reports/release-readiness.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
@@ -40,6 +83,7 @@ def main() -> int:
         "# Release Readiness\n\n" +
         f"- Status: {report['status']}\n" +
         f"- Failures: {len(failures)}\n" +
+        f"- Warnings: {len(warnings)}\n" +
         f"- Source: {sample_path}\n",
         encoding="utf-8"
     )
@@ -49,6 +93,12 @@ def main() -> int:
         for failure in failures:
             print(f"- {failure}")
         return 1
+
+    if warnings:
+        print("Gate evaluation warnings:")
+        for warning in warnings:
+            print(f"- {warning}")
+        return 0
 
     print("All quality gates passed")
     return 0

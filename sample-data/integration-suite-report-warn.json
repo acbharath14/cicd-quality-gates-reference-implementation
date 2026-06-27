@@ -1,0 +1,29 @@
+{
+  "suite": "microservices-contract-suite",
+  "finalDecision": "WARN",
+  "scenarios": [
+    {
+      "scenario": "happy-path",
+      "outcome": "PASS",
+      "releaseDecision": "PASS",
+      "reason": "All service contracts were satisfied"
+    },
+    {
+      "scenario": "timeout-fallback",
+      "outcome": "PASS",
+      "releaseDecision": "WARN",
+      "reason": "Underwriting timed out and fallback policy was used"
+    },
+    {
+      "scenario": "schema-drift",
+      "outcome": "FAIL",
+      "releaseDecision": "BLOCK",
+      "reason": "Field 'orderId' expected type 'number' but got 'str'"
+    }
+  ],
+  "counts": {
+    "pass": 1,
+    "warn": 1,
+    "block": 1
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "suite": "microservices-contract-suite",
+  "finalDecision": "PASS",
+  "scenarios": [
+    {
+      "scenario": "happy-path",
+      "outcome": "PASS",
+      "releaseDecision": "PASS",
+      "reason": "All service contracts were satisfied"
+    }
+  ],
+  "counts": {
+    "pass": 1,
+    "warn": 0,
+    "block": 0
+  }
+}
