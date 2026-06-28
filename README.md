@@ -1,6 +1,14 @@
 # CI/CD Quality Gates Reference Implementation
 
-Reference repo showing how automation, performance, accessibility, and static analysis can be enforced as release gates.
+## Portfolio Role
+This repository is the governance decisioning part of the portfolio story.
+It shows how metrics, integration evidence, and policy combine into explicit PASS, WARN, or BLOCK release outcomes.
+
+## Profile Map
+- Portfolio narrative: governance decisioning
+- Skill signal: release governance and CI/CD quality gates
+- Review focus: threshold policy, combined report input, and auditable readiness decisions
+- Evidence anchor: `docs/evidence-integration.md`
 
 ## Business Value
 - Converts abstract quality discussions into explicit pass or fail policy.
