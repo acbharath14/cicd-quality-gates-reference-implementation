@@ -1,76 +1,62 @@
-# CI/CD Quality Gates Reference Implementation
+# CI/CD Quality Gates
 
-## Portfolio Role
-This repository is the governance decisioning part of the portfolio story.
-It shows how metrics, integration evidence, and policy combine into explicit PASS, WARN, or BLOCK release outcomes.
+A runnable reference implementation of release quality gates: feed it metrics (smoke results, performance numbers, accessibility violations, static analysis) plus an optional integration-suite report, and it produces an explicit **PASS**, **WARN**, or **BLOCK** decision with an auditable readiness report.
 
-## Profile Map
-- Portfolio narrative: governance decisioning
-- Skill signal: release governance and CI/CD quality gates
-- Review focus: threshold policy, combined report input, and auditable readiness decisions
-- Evidence anchor: `docs/evidence-integration.md`
-
-## Business Value
-- Converts abstract quality discussions into explicit pass or fail policy.
-- Produces an auditable readiness report that can be attached to release approvals.
-- Makes threshold governance reproducible in local and CI execution.
-- Consumes upstream integration-suite decisions to produce cross-repo release governance.
+The point is to turn "are we ready to release?" from a meeting into a script.
 
 ## Architecture
+
 ```mermaid
 flowchart LR
-	Metrics[Sample Metrics Input] --> Evaluator[Gate Evaluation Script]
+	Metrics[Metrics Input] --> Evaluator[Gate Evaluation Script]
 	Integration[Integration Suite Report] --> Evaluator
 	Policy[Threshold Policy] --> Evaluator
 	Evaluator --> Report[Release Readiness Report]
 	Evaluator --> Exit[Pipeline Exit Code]
 ```
 
-## What This Proves
-- You can embed quality checks directly into delivery pipelines.
-- You understand release governance, thresholds, and actionable failure signals.
-- You can design quality gates that teams can actually operate.
-
-## Included in Day 1
-- Pipeline templates for GitLab and Jenkins
-- Smoke test and gate scaffolding
-- Threshold configuration files
-- Documentation for quality policy and release criteria
-
 ## Quick Start
+
 ```bash
 ./run-tests.sh
 ```
 
-Windows alternative:
+Windows:
+
 ```powershell
 python scripts\evaluate_gates.py sample-data\metrics.json
 ```
 
-With integration suite input:
+With an integration-suite report as second input (try the `-warn` and `-block` variants in `sample-data/` to see all three decisions):
+
 ```powershell
 python scripts\evaluate_gates.py sample-data\metrics.json sample-data\integration-suite-report-pass.json
 ```
 
-## Demonstrable Behavior
-1. Evaluates real sample metrics.
-2. Optionally evaluates integration-suite report outcomes from another repository.
-3. Writes a release-readiness report to the reports folder.
-4. Returns PASS, WARN, or BLOCK based on combined governance rules.
+## How It Decides
 
-## Core Files
-- scripts/evaluate_gates.py
-- sample-data/metrics.json
-- sample-data/integration-suite-report-pass.json
-- sample-data/integration-suite-report-warn.json
-- gates/thresholds/performance-thresholds.json
-- gates/thresholds/quality-policy.yaml
+Thresholds live in `gates/thresholds/` (JSON + YAML) and are evaluated in `scripts/evaluate_gates.py`:
 
-## Evidence
-1. Base metrics evaluation: docs/evidence.md
-2. Cross-repo integration governance: docs/evidence-integration.md
+- Any hard failure (smoke, latency/error-rate/throughput breach, accessibility criticals, analysis blockers) → **BLOCK**
+- Integration suite warnings with no hard failures → **WARN**
+- Clean across the board → **PASS**
+
+The exit code mirrors the decision, so it drops straight into any pipeline.
+
+## What's Inside
+
+- `scripts/evaluate_gates.py` — the evaluator
+- `gates/thresholds/` — performance thresholds and quality policy
+- `sample-data/` — pass, warn, and block scenarios you can run as-is
+- `ci/` — GitLab CI and Jenkins pipeline templates
+- `docs/` — policy notes and evidence
 
 ## Roadmap
-1. Add pipeline stages for build, smoke, performance, and accessibility
-2. Add threshold policy evaluation
-3. Publish reports and release readiness summary
+
+- Unit tests for the evaluator itself (threshold boundaries, escalation rules)
+- JUnit/JSON/Markdown report formats for pipeline integration
+- GitHub Actions workflow with the readiness report as a build artifact
+
+## License
+
+MIT — see [LICENSE](LICENSE).
