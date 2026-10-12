@@ -51,11 +51,15 @@ The exit code mirrors the decision, so it drops straight into any pipeline.
 - `ci/` — GitLab CI and Jenkins pipeline templates
 - `docs/` — policy notes and evidence
 
+## What's implemented
+
+- **Unit tests** — `tests/test_evaluate_gates.py`: 18 pytest tests covering threshold boundaries and escalation rules
+- **JUnit XML reports** — `python scripts/evaluate_gates.py --junit reports/junit.xml` for pipeline integration (JSON and Markdown reports also generated)
+- **GitHub Actions** — workflow template in `ci/github-actions.yml` (copy to `.github/workflows/` via web UI); uploads readiness reports as build artifacts
+
 ## Roadmap
 
-- Unit tests for the evaluator itself (threshold boundaries, escalation rules)
-- JUnit/JSON/Markdown report formats for pipeline integration
-- GitHub Actions workflow with the readiness report as a build artifact
+- Custom threshold policies per service
 
 ## License
 
