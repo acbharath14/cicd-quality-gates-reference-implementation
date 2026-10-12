@@ -79,14 +79,33 @@ def main() -> int:
     }
     Path("reports").mkdir(exist_ok=True)
     Path("reports/release-readiness.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
-    Path("reports/release-readiness.md").write_text(
-        "# Release Readiness\n\n" +
-        f"- Status: {report['status']}\n" +
-        f"- Failures: {len(failures)}\n" +
-        f"- Warnings: {len(warnings)}\n" +
-        f"- Source: {sample_path}\n",
-        encoding="utf-8"
-    )
+    md = ["# Release Readiness\n", f"**Status: {report['status']}**\n",
+          f"- Source metrics: `{sample_path}`",
+          f"- Integration report: `{integration_path if integration_path else 'none'}`\n"]
+    md.append("## Gate results\n")
+    md.append("| Gate | Result |")
+    md.append("| --- | --- |")
+    for key, label in GATE_CHECKS:
+        mark = "❌ FAIL" if any(label.lower() in f.lower() for f in failures) else "✅ PASS"
+        md.append(f"| {label} | {mark} |")
+    if integration_path:
+        imark = "❌ FAIL" if any("integration" in f.lower() or "scenario" in f.lower()
+                                 for f in failures) else ("⚠️ WARN" if warnings else "✅ PASS")
+        md.append(f"| Integration suite report | {imark} |")
+    if failures:
+        md.append("\n## Failures\n")
+        md.extend(f"- ❌ {f}" for f in failures)
+    if warnings:
+        md.append("\n## Warnings\n")
+        md.extend(f"- ⚠️ {w}" for w in warnings)
+    if not failures and not warnings:
+        md.append("\nAll quality gates passed. ✅\n")
+    md.append(f"\n## Thresholds\n")
+    md.append("| Metric | Threshold |")
+    md.append("| --- | --- |")
+    for k, v in THRESHOLDS.items():
+        md.append(f"| `{k}` | `{v}` |")
+    Path("reports/release-readiness.md").write_text("\n".join(md) + "\n", encoding="utf-8")
 
     if failures:
         print("Gate evaluation failed:")
