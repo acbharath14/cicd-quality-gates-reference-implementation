@@ -54,7 +54,9 @@ The exit code mirrors the decision, so it drops straight into any pipeline.
 ## What's implemented
 
 - **Unit tests** — `tests/test_evaluate_gates.py`: 18 pytest tests covering threshold boundaries and escalation rules
-- **JUnit XML reports** — `python scripts/evaluate_gates.py --junit reports/junit.xml` for pipeline integration (JSON and Markdown reports also generated)
+- **JUnit XML reports** — `python scripts/evaluate_gates.py --junit reports/junit.xml` for pipeline integration
+- **HTML reports** — `python scripts/evaluate_gates.py --html reports/readiness.html`; self-contained, open directly in a browser
+- **JSON + Markdown** — `reports/release-readiness.json` (machine-readable) and `reports/release-readiness.md` (human-readable); the Markdown also renders inline in the GitHub Actions run summary
 - **GitHub Actions** — workflow template in `ci/github-actions.yml` (copy to `.github/workflows/` via web UI); uploads readiness reports as build artifacts
 
 ## Roadmap
