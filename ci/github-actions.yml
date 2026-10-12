@@ -25,10 +25,17 @@ jobs:
         run: python -m pytest tests/ -q
 
       - name: Evaluate gates (PASS sample)
-        run: python scripts/evaluate_gates.py sample-data/metrics.json --junit reports/junit-pass.xml || true
+        run: python scripts/evaluate_gates.py sample-data/metrics.json --junit reports/junit-pass.xml --html reports/readiness-pass.html || true
 
       - name: Evaluate gates (WARN sample)
-        run: python scripts/evaluate_gates.py sample-data/metrics.json sample-data/integration-suite-report-warn.json --junit reports/junit-warn.xml || true
+        run: python scripts/evaluate_gates.py sample-data/metrics.json sample-data/integration-suite-report-warn.json --junit reports/junit-warn.xml --html reports/readiness-warn.html || true
+
+      - name: Render summary in Actions UI
+        if: always()
+        run: |
+          echo "# Quality Gates Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat reports/release-readiness.md >> $GITHUB_STEP_SUMMARY
 
       - name: Upload readiness reports
         if: always()
