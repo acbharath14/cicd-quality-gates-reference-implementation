@@ -1,3 +1,10 @@
+# REFERENCE COPY — the live workflow is .github/workflows/ci.yml.
+#
+# This file is kept in ci/ alongside the Jenkins and GitLab templates so all
+# pipeline definitions live in one place. It mirrors the live workflow; if
+# they drift, the live file wins. (Workflow files cannot be pushed through
+# the GitHub App API, so any update to the live file goes through the web UI.)
+#
 # CI/CD Quality Gates — copy to .github/workflows/ci.yml
 # (GitHub App cannot push workflow files; add via web UI)
 name: Quality Gates
@@ -43,3 +50,4 @@ jobs:
         with:
           name: readiness-reports
           path: reports/
+
