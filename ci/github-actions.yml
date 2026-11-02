@@ -50,4 +50,6 @@ jobs:
         with:
           name: readiness-reports
           path: reports/
+          retention-days: 7
+
 
