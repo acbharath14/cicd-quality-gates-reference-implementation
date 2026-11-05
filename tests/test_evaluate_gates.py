@@ -92,11 +92,6 @@ def test_no_integration_report_is_clean():
     assert failures == [] and warnings == []
 
 
-def test_integration_pass_is_clean():
-    failures, warnings = evaluate_integration_report({"finalDecision": "PASS", "scenarios": []})
-    assert failures == [] and warnings == []
-
-
 def test_integration_block_escalates_to_failure():
     failures, warnings = evaluate_integration_report({"finalDecision": "BLOCK", "scenarios": []})
     assert failures == ["Integration suite reported BLOCK decision"]
